@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alert Construction | Chatbot Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/widget.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: #f5f5f3; }
+  a { text-decoration: none; }
+  .topbar { background: #1a1a1a; color: #cfcfcf; font-size: 12px; display: flex; justify-content: flex-end; gap: 24px; padding: 8px 48px; }
+  .nav { background: #fff; border-bottom: 1px solid #ececec; display: flex; align-items: center; justify-content: space-between; padding: 18px 48px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark { width: 40px; height: 40px; border-radius: 8px; background: #1a1a1a; color: #f1b32d; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+  .brand-name { font-size: 16px; font-weight: 700; color: #1a1a1a; line-height: 1.1; }
+  .brand-sub { font-size: 11px; color: #9a9a9a; letter-spacing: .04em; }
+  .navlinks { display: none; gap: 32px; font-size: 14px; font-weight: 500; color: #333; }
+  @media (min-width: 900px) { .navlinks { display: flex; } }
+  .cta { background: #f1b32d; color: #1a1a1a; font-size: 14px; font-weight: 700; padding: 12px 20px; border-radius: 4px; }
+  .hero { background: linear-gradient(135deg, #1a1a1a 0%, #2a2620 60%, #3a2f16 100%); padding: 90px 48px; }
+  .hero-inner { max-width: 640px; }
+  .eyebrow { color: #f1b32d; font-size: 13px; font-weight: 700; letter-spacing: .14em; margin-bottom: 18px; }
+  .headline { color: #fff; font-size: 44px; font-weight: 800; line-height: 1.15; margin: 0 0 18px 0; }
+  .sub { color: #c9c9c9; font-size: 16px; line-height: 1.6; max-width: 520px; margin-bottom: 30px; }
+  .services { padding: 56px 48px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .service-card { flex: 1; min-width: 160px; max-width: 200px; background: #fff; border-radius: 8px; padding: 22px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.06); text-align: center; }
+  .service-label { font-size: 13px; color: #9a9a9a; margin-bottom: 6px; }
+  .service-title { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .note { max-width: 640px; margin: 0 auto 40px auto; padding: 16px 20px; background: #fff8e8; border: 1px solid #f1b32d; border-radius: 8px; font-size: 13px; color: #6b4a0a; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span>(03) 8820 6567 &middot; 0460 006 004</span>
+  <span>info@alertconstruction.com.au</span>
+  <span>Mon &ndash; Sat: 8 AM &ndash; 5 PM</span>
+</div>
+
+<div class="nav">
+  <div class="brand">
+    <div class="brand-mark">AC</div>
+    <div>
+      <div class="brand-name">Alert Construction</div>
+      <div class="brand-sub">YOUR BUILDING CLINIC</div>
+    </div>
+  </div>
+  <div class="navlinks">
+    <span>About Us</span><span>Services</span><span>Showcase</span><span>Articles</span><span>Bathroom Packs</span>
+  </div>
+  <div class="cta">Contact Us</div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">BUILDING &middot; RENOVATION &middot; ENGINEERING</div>
+    <h1 class="headline">Alert Construction,<br>Your Building Clinic</h1>
+    <p class="sub">We help Melbourne homeowners diagnose structural needs, plan premium alterations, and execute architectural handovers with absolute certainty.</p>
+  </div>
+</div>
+
+<div class="services">
+  <div class="service-card"><div class="service-label">Kitchens</div><div class="service-title">Kitchen Renovations</div></div>
+  <div class="service-card"><div class="service-label">Bathrooms</div><div class="service-title">Bathroom Renovations</div></div>
+  <div class="service-card"><div class="service-label">Extensions</div><div class="service-title">Home Extensions</div></div>
+  <div class="service-card"><div class="service-label">Engineering</div><div class="service-title">Structural Engineering</div></div>
+</div>
+
+<div class="note">
+  This is an internal demo page for reviewing the chatbot only — layout mirrors alertconstruction.com.au for context.
+  Click the gold chat button in the bottom-right corner to try the assistant.
+</div>
+
+<script src="/widget.js"></script>
+</body>
+</html>

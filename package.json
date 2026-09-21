@@ -1,0 +1,9 @@
+{
+  "name": "alert-chatbot-demo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Demo chatbot widget for Alert Construction (alertconstruction.com.au)",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
