@@ -50,14 +50,24 @@ export default async (req, context) => {
   const payload = {
     system_instruction: { parts: [{ text: buildSystemPrompt() }] },
     contents,
-    generationConfig: { temperature: 0.6, maxOutputTokens: 400 },
+    generationConfig: {
+      temperature: 0.6,
+      maxOutputTokens: 800,
+      // Newer Gemini models spend part of maxOutputTokens on internal "thinking"
+      // before writing the reply, which can leave nothing for the actual answer
+      // (finishReason: MAX_TOKENS with empty text). Turn that off for a plain
+      // chat reply — we don't need multi-step reasoning here.
+      thinkingConfig: { thinkingBudget: 0 },
+    },
     safetySettings: [
       { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_ONLY_HIGH" },
       { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_ONLY_HIGH" },
     ],
   };
 
-   const model = "gemini-3.6-flash";  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  const model = "gemini-3.6-flash";
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
   let reply = "Sorry, I'm having trouble connecting right now — please try again in a moment, or call us on (03) 8820 6567.";
   try {
     const res = await fetch(url, {
@@ -67,8 +77,19 @@ export default async (req, context) => {
     });
     const data = await res.json();
     if (res.ok) {
-      reply =
-        data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || reply;
+      const parsed = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("");
+      if (parsed) {
+        reply = parsed;
+      } else {
+        // 200 OK but no usable text — usually a safety block or a truncated response.
+        // Log the reason instead of silently falling back, so this is diagnosable.
+        console.error(
+          "Gemini returned no text",
+          "blockReason:", data?.promptFeedback?.blockReason,
+          "finishReason:", data?.candidates?.[0]?.finishReason,
+          JSON.stringify(data).slice(0, 800)
+        );
+      }
     } else {
       console.error("Gemini error", res.status, JSON.stringify(data).slice(0, 500));
     }
