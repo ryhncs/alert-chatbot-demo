@@ -178,10 +178,34 @@
     state.history.push({ role: "user", text: text });
   }
 
+  // Minimal, safe markdown -> HTML: escapes everything first, then re-enables
+  // just **bold**, [text](url) links, and "* "/"- " bullet lines. Anything the
+  // model writes that isn't one of these stays as plain escaped text.
+  function mdToHtml(text) {
+    var s = String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function (_, label, url) {
+      return '<a href="' + url + '" target="_blank" rel="noopener">' + label + "</a>";
+    });
+    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    s = s
+      .split("\n")
+      .map(function (line) {
+        var m = line.match(/^(\s*)[*-]\s+(.*)$/);
+        return m ? m[1] + "• " + m[2] : line;
+      })
+      .join("\n");
+    return s;
+  }
+
   function addBotMessage(text, articles) {
+    var bubble = el("div", { class: "ac-bubble2" });
+    bubble.innerHTML = mdToHtml(text);
     var row = el("div", { class: "ac-msg ac-msg-bot" }, [
       el("div", { class: "ac-mini-avatar" }, ["AC"]),
-      el("div", { class: "ac-bubble2" }, [text]),
+      bubble,
     ]);
     ui.messages.appendChild(row);
     if (articles && articles.length) {
