@@ -69,32 +69,44 @@ export default async (req, context) => {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   let reply = "Sorry, I'm having trouble connecting right now — please try again in a moment, or call us on (03) 8820 6567.";
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      const parsed = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("");
-      if (parsed) {
-        reply = parsed;
-      } else {
+
+  // Google's API occasionally returns 503 "model overloaded" for a moment —
+  // retry once or twice with a short backoff before giving up.
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        const parsed = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("");
+        if (parsed) {
+          reply = parsed;
+          break;
+        }
         // 200 OK but no usable text — usually a safety block or a truncated response.
-        // Log the reason instead of silently falling back, so this is diagnosable.
         console.error(
           "Gemini returned no text",
           "blockReason:", data?.promptFeedback?.blockReason,
           "finishReason:", data?.candidates?.[0]?.finishReason,
           JSON.stringify(data).slice(0, 800)
         );
+        break; // not a transient error — retrying won't help
       }
-    } else {
+
       console.error("Gemini error", res.status, JSON.stringify(data).slice(0, 500));
+      const retryable = res.status === 503 || res.status === 429;
+      if (!retryable || attempt === maxAttempts) break;
+      await new Promise((r) => setTimeout(r, 500 * attempt));
+    } catch (err) {
+      console.error("Gemini fetch failed", err);
+      if (attempt === maxAttempts) break;
+      await new Promise((r) => setTimeout(r, 500 * attempt));
     }
-  } catch (err) {
-    console.error("Gemini fetch failed", err);
   }
 
   const relatedArticles = articlesFor(lastUserText + " " + reply);
