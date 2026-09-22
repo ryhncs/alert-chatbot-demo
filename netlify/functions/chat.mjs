@@ -57,9 +57,7 @@ export default async (req, context) => {
     ],
   };
 
-  const model = "gemini-2.0-flash";
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
+   const model = "gemini-3.6-flash";  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   let reply = "Sorry, I'm having trouble connecting right now — please try again in a moment, or call us on (03) 8820 6567.";
   try {
     const res = await fetch(url, {
